@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Load d3.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+
+<!-- Create an element where the map will take place -->
+<div id="map-container" style="width: 100%; margin: 0 auto; position: relative; text-align: center;">
+    <svg id="my_dataviz" width="100%" height="800"></svg>
+</div>
+
+<script>
+// Define color variables
+const COLORS = {
+    ongoing: "#00B398",
+    completed: "#8EBEFF",
+    both: "#027B68",
+    default: "#E6E6E6",
+    stroke: "#fff",
+    // hover: "#0072BC",
+    tooltipText: "black",
+    tooltipBg: "white",
+    tooltipBorder: "#ccc"
+};
+
+const countryCategories = {
+    ongoing: ["Benin", "Burundi", "Cameroon", "Cote d'Ivoire", "Gambia" , "Guatemala" ,"Guinea Bissau" ,"Honduras", "Libya", "Malawi", "Malaysia", "Mali", "Mauritania", "Moldova", "Mozambique", "Niger", "Pakistan", "Republic of the Congo", "South Sudan", "Sudan", "Togo", "Uganda", "Ukraine" , "United Republic of Tanzania", "Senegal" , "Zimbabwe"],
+    completed: ["Chile", "Kazakhstan", "KRI", "Kyrgyzstan", "Turkmenistan"],
+    both: ["Afghanistan", "Bangladesh", "Burkina Faso", "Central African Republic", "Chad", "Colombia", "Djibouti", "Democratic Republic of the Congo", "Ecuador", "Ethiopia" ,"Iraq", "Kenya", "Jordan" ,"Lebanon", "Peru","Somalia","Somalia ", "Yemen","Türkiye"]
+};
+
+const countryStatus = {};
+countryCategories.ongoing.forEach(c => countryStatus[c] = "ongoing");
+countryCategories.completed.forEach(c => countryStatus[c] = "completed");
+countryCategories.both.forEach(c => countryStatus[c] = "both");
+
+const svg = d3.select("#my_dataviz"),
+    container = d3.select("#map-container"),
+    width = container.node().getBoundingClientRect().width,
+    height = 600;
+
+svg.attr("width", width).attr("height", height);
+
+const projection = d3.geoNaturalEarth1()
+    .scale((width - 50) / (2 * Math.PI))
+    .translate([width / 2, height / 2]);
+
+d3.json("https://jointdatacenter.github.io/geodata/world.geojson").then(data => {
+    data.features = data.features.filter(d => d.properties.name !== "Antarctica");
+
+    svg.append("g")
+        .selectAll("path")
+        .data(data.features)
+        .join("path")
+        .attr("d", d3.geoPath().projection(projection))
+        .attr("fill", d => COLORS[countryStatus[d.properties.name]] || COLORS.default)
+        .attr("stroke", COLORS.stroke)
+        .style("stroke-width", "0.5")
+        .on("mouseover", function(event, d) {
+            const [mouseX, mouseY] = d3.pointer(event, svg.node());
+            const tooltipGroup = svg.append("g").attr("class", "tooltip");
+            
+            const textElement = tooltipGroup.append("text")
+                .attr("x", mouseX + 10)
+                .attr("y", mouseY + 16)
+                .attr("fill", COLORS.tooltipText)
+                .style("font-size", "14px")
+                .text(d.properties.name);
+
+            const bbox = textElement.node().getBBox();
+
+            tooltipGroup.insert("rect", "text")
+                .attr("x", bbox.x - 5 + mouseX + 8)
+                .attr("y", bbox.y - 3 + mouseY)
+                .attr("width", bbox.width + 10)
+                .attr("height", bbox.height + 6)
+                .attr("fill", COLORS.tooltipBg)
+                .attr("stroke", COLORS.tooltipBorder)
+                .attr("rx", 4)
+                .attr("ry", 4);
+        })
+        .on("mousemove", event => {
+            const [mouseX, mouseY] = d3.pointer(event, svg.node());
+            svg.select(".tooltip rect").attr("x", mouseX + 8).attr("y", mouseY);
+            svg.select(".tooltip text").attr("x", mouseX + 10).attr("y", mouseY + 16);
+        })
+        .on("mouseout", function(event, d) {
+            d3.select(this).attr("fill", COLORS[countryStatus[d.properties.name]] || COLORS.default);
+            svg.select(".tooltip").remove();
+        })
+        .on("click", (event, d) => {
+        //    window.open(`https://en.wikipedia.org/wiki/${encodeURIComponent(d.properties.name)}`, "_blank");
+         });
+});
+
+const legendData = [
+    { label: "Ongoing", color: COLORS.ongoing },
+    { label: "Ongoing & Completed", color: COLORS.both },
+    { label: "Completed", color: COLORS.completed },
+
+];
+
+const legend = svg.append("g")
+    .attr("class", "legend")
+    .attr("transform", `translate(${width - 180}, 30)`);
+
+legend.selectAll("rect")
+    .data(legendData)
+    .enter()
+    .append("rect")
+    .attr("x", 0)
+    .attr("y", (d, i) => i * 25)
+    .attr("width", 18)
+    .attr("height", 18)
+    .style("fill", d => d.color);
+
+legend.selectAll("text")
+    .data(legendData)
+    .enter()
+    .append("text")
+    .attr("x", 25)
+    .attr("y", (d, i) => i * 25 + 13)
+    .text(d => d.label)
+    .style("font-size", "14px")
+    .attr("alignment-baseline", "middle");
+  
+</script>
