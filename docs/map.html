@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700&display=swap" rel="stylesheet">
+
 <!-- Load d3.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+
+<script src="countries_data.js"></script>
 
 <!-- Create an element where the map will take place -->
 <div id="map-container" style="width: 100%; margin: 0 auto; position: relative; text-align: center;">
@@ -21,12 +25,6 @@ const COLORS = {
     tooltipText: "black",
     tooltipBg: "white",
     tooltipBorder: "#ccc"
-};
-
-const countryCategories = {
-    ongoing: ["Benin", "Burundi", "Cameroon", "Cote d'Ivoire", "Gambia" , "Guatemala" ,"Guinea Bissau" ,"Honduras", "Libya", "Malawi", "Malaysia", "Mali", "Mauritania", "Moldova", "Mozambique", "Niger", "Pakistan", "Republic of the Congo", "South Sudan", "Sudan", "Togo", "Uganda", "Ukraine" , "United Republic of Tanzania", "Senegal" , "Zimbabwe"],
-    completed: ["Chile", "Kazakhstan", "KRI", "Kyrgyzstan", "Turkmenistan"],
-    both: ["Afghanistan", "Bangladesh", "Burkina Faso", "Central African Republic", "Chad", "Colombia", "Djibouti", "Democratic Republic of the Congo", "Ecuador", "Ethiopia" ,"Iraq", "Kenya", "Jordan" ,"Lebanon", "Peru","Somalia","Somalia ", "Yemen","Türkiye"]
 };
 
 const countryStatus = {};
@@ -65,6 +63,7 @@ d3.json("https://jointdatacenter.github.io/geodata/world.geojson").then(data => 
                 .attr("y", mouseY + 16)
                 .attr("fill", COLORS.tooltipText)
                 .style("font-size", "14px")
+                .style("font-family", "Lato, sans-serif")
                 .text(d.properties.name);
 
             const bbox = textElement.node().getBBox();
@@ -122,6 +121,7 @@ legend.selectAll("text")
     .attr("y", (d, i) => i * 25 + 13)
     .text(d => d.label)
     .style("font-size", "14px")
+    .style("font-family", "Lato, sans-serif")
     .attr("alignment-baseline", "middle");
   
 </script>
