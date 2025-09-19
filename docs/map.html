@@ -6,7 +6,7 @@
 <!-- Load d3.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 
-<script src="countries_data.js"></script>
+<script src="countries_data_iso3.js"></script>
 
 <!-- Create an element where the map will take place -->
 <div id="map-container" style="width: 100%; margin: 0 auto; position: relative; text-align: center;">
@@ -39,35 +39,58 @@ const svg = d3.select("#my_dataviz"),
 
 svg.attr("width", width).attr("height", height);
 
-const projection = d3.geoNaturalEarth1()
-    .scale((width - 50) / (2 * Math.PI))
-    .translate([width / 2, height / 2]);
+const projection = d3.geoEqualEarth();
 
-d3.json("https://jointdatacenter.github.io/geodata/world.geojson").then(data => {
-    data.features = data.features.filter(d => d.properties.name !== "Antarctica");
+d3.json("world_countries_lite.geojson").then(geojson => {
+    if(!geojson || !geojson.features) {
+        console.error("GeoJSON did not load or has no features:", geojson);
+        return;
+    }
+    console.log("GeoJSON loaded:", geojson.features.length, "features");
 
-    svg.append("g")
-        .selectAll("path")
-        .data(data.features)
+
+    // Remove Antarctica if present and filter out null geometries
+    geojson.features = geojson.features.filter(d => {
+        const name = d.properties && (d.properties.country_name || d.properties.ADMIN || d.properties.name);
+        const hasValidGeometry = d.geometry &&
+                                 d.geometry.coordinates &&
+                                 d.geometry.coordinates.length > 0 &&
+                                 d.geometry.type &&
+                                 (d.geometry.type === "Polygon" || d.geometry.type === "MultiPolygon");
+        return name && name.toLowerCase() !== "antarctica" && hasValidGeometry;
+    });
+    console.log("After filtering:", geojson.features.length, "features");
+
+    // Use fitSize to properly scale and center the map
+    projection.fitSize([width, height], { type: "FeatureCollection", features: geojson.features });
+
+    const pathGenerator = d3.geoPath().projection(projection);
+
+
+
+    // draw
+    svg.selectAll("path")
+        .data(geojson.features)
         .join("path")
-        .attr("d", d3.geoPath().projection(projection))
-        .attr("fill", d => COLORS[countryStatus[d.properties.name]] || COLORS.default)
+        .attr("d", pathGenerator)
+        .attr("fill", d => {
+            const iso = d.properties && d.properties.iso3;
+            const status = countryStatus[iso];
+            return COLORS[status] || COLORS.default;
+        })
         .attr("stroke", COLORS.stroke)
         .style("stroke-width", "0.5")
         .on("mouseover", function(event, d) {
             const [mouseX, mouseY] = d3.pointer(event, svg.node());
             const tooltipGroup = svg.append("g").attr("class", "tooltip");
-            
             const textElement = tooltipGroup.append("text")
                 .attr("x", mouseX + 10)
                 .attr("y", mouseY + 16)
                 .attr("fill", COLORS.tooltipText)
                 .style("font-size", "14px")
                 .style("font-family", "Lato, sans-serif")
-                .text(d.properties.name);
-
+                .text(d.properties.country_name || d.properties.ADMIN || d.properties.name);
             const bbox = textElement.node().getBBox();
-
             tooltipGroup.insert("rect", "text")
                 .attr("x", bbox.x - 5 + mouseX + 8)
                 .attr("y", bbox.y - 3 + mouseY)
@@ -84,12 +107,15 @@ d3.json("https://jointdatacenter.github.io/geodata/world.geojson").then(data => 
             svg.select(".tooltip text").attr("x", mouseX + 10).attr("y", mouseY + 16);
         })
         .on("mouseout", function(event, d) {
-            d3.select(this).attr("fill", COLORS[countryStatus[d.properties.name]] || COLORS.default);
+            d3.select(this).attr("fill", COLORS[countryStatus[d.properties.iso3]] || COLORS.default);
             svg.select(".tooltip").remove();
         })
         .on("click", (event, d) => {
         //    window.open(`https://en.wikipedia.org/wiki/${encodeURIComponent(d.properties.name)}`, "_blank");
          });
+})
+.catch(err => {
+    console.error("Failed to load GeoJSON:", err);
 });
 
 const legendData = [
