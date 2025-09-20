@@ -8,6 +8,18 @@
     <object id="svg-object" data="map_unhcr.svg" type="image/svg+xml" width="100%" height="600">
         <img src="map_unhcr.svg" alt="World Map" width="100%" height="600">
     </object>
+
+    <!-- Legend -->
+    <svg id="legend" style="position: absolute; top: 30px; right: 20px; width: 180px; height: 75px;">
+        <rect x="0" y="0" width="18" height="18" fill="#00B398"></rect>
+        <text x="25" y="13" font-family="Lato, sans-serif" font-size="14px" alignment-baseline="middle">Ongoing</text>
+
+        <rect x="0" y="25" width="18" height="18" fill="#027B68"></rect>
+        <text x="25" y="38" font-family="Lato, sans-serif" font-size="14px" alignment-baseline="middle">Ongoing & Completed</text>
+
+        <rect x="0" y="50" width="18" height="18" fill="#8EBEFF"></rect>
+        <text x="25" y="63" font-family="Lato, sans-serif" font-size="14px" alignment-baseline="middle">Completed</text>
+    </svg>
 </div>
 
 <script src="countries_data.js"></script>
