@@ -3,28 +3,21 @@
 
 <link href="https://fonts.googleapis.com/css?family=Lato:400,700&display=swap" rel="stylesheet">
 
-<!-- Load d3.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
-
-<script src="countries_data_iso3.js"></script>
-
 <!-- Create an element where the map will take place -->
 <div id="map-container" style="width: 100%; margin: 0 auto; position: relative; text-align: center;">
-    <svg id="my_dataviz" width="100%" height="800"></svg>
+    <object id="svg-object" data="map_unhcr.svg" type="image/svg+xml" width="100%" height="800">
+        <img src="map_unhcr.svg" alt="World Map" width="100%" height="800">
+    </object>
 </div>
 
+<script src="countries_data.js"></script>
 <script>
 // Define color variables
 const COLORS = {
     ongoing: "#00B398",
     completed: "#8EBEFF",
     both: "#027B68",
-    default: "#E6E6E6",
-    stroke: "#fff",
-    // hover: "#0072BC",
-    tooltipText: "black",
-    tooltipBg: "white",
-    tooltipBorder: "#ccc"
+    default: "#E6E6E6"
 };
 
 const countryStatus = {};
@@ -32,122 +25,65 @@ countryCategories.ongoing.forEach(c => countryStatus[c] = "ongoing");
 countryCategories.completed.forEach(c => countryStatus[c] = "completed");
 countryCategories.both.forEach(c => countryStatus[c] = "both");
 
-const svg = d3.select("#my_dataviz"),
-    container = d3.select("#map-container"),
-    width = container.node().getBoundingClientRect().width,
-    height = 600;
+// Wait for SVG to load
+document.getElementById('svg-object').addEventListener('load', function() {
+    const svgDoc = this.contentDocument;
+    const paths = svgDoc.querySelectorAll('path');
 
-svg.attr("width", width).attr("height", height);
+    paths.forEach(path => {
+        // Get country code from the id attribute (now properly set)
+        const countryCode = path.getAttribute('id');
+        const countryName = path.getAttribute('data-name');
 
-const projection = d3.geoEqualEarth();
+        if (countryCode && countryStatus[countryCode]) {
+            path.style.fill = COLORS[countryStatus[countryCode]];
+        } else {
+            path.style.fill = COLORS.default;
+        }
 
-d3.json("world_countries_lite.geojson").then(geojson => {
-    if(!geojson || !geojson.features) {
-        console.error("GeoJSON did not load or has no features:", geojson);
-        return;
-    }
-    console.log("GeoJSON loaded:", geojson.features.length, "features");
+        // Add stroke for better visibility
+        path.style.stroke = '#fff';
+        path.style.strokeWidth = '0.5px';
 
+        // Add hover effects with country name tooltip
+        path.addEventListener('mouseenter', function(e) {
+            // Create tooltip
+            const tooltip = document.createElement('div');
+            tooltip.id = 'country-tooltip';
+            tooltip.textContent = countryName || countryCode;
+            tooltip.style.cssText = `
+                position: fixed;
+                background: white;
+                border: 1px solid #ccc;
+                padding: 5px 10px;
+                border-radius: 4px;
+                font-family: Lato, sans-serif;
+                font-size: 14px;
+                color: black;
+                pointer-events: none;
+                z-index: 1000;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            `;
+            document.body.appendChild(tooltip);
+        });
 
-    // Remove Antarctica if present and filter out null geometries
-    geojson.features = geojson.features.filter(d => {
-        const name = d.properties && (d.properties.country_name || d.properties.ADMIN || d.properties.name);
-        const hasValidGeometry = d.geometry &&
-                                 d.geometry.coordinates &&
-                                 d.geometry.coordinates.length > 0 &&
-                                 d.geometry.type &&
-                                 (d.geometry.type === "Polygon" || d.geometry.type === "MultiPolygon");
-        return name && name.toLowerCase() !== "antarctica" && hasValidGeometry;
+        path.addEventListener('mousemove', function(e) {
+            const tooltip = document.getElementById('country-tooltip');
+            if (tooltip) {
+                tooltip.style.left = (e.clientX + 10) + 'px';
+                tooltip.style.top = (e.clientY - 30) + 'px';
+            }
+        });
+
+        path.addEventListener('mouseleave', function(e) {
+            const tooltip = document.getElementById('country-tooltip');
+            if (tooltip) {
+                tooltip.remove();
+            }
+        });
     });
-    console.log("After filtering:", geojson.features.length, "features");
-
-    // Use fitSize to properly scale and center the map
-    projection.fitSize([width, height], { type: "FeatureCollection", features: geojson.features });
-
-    const pathGenerator = d3.geoPath().projection(projection);
-
-
-
-    // draw
-    svg.selectAll("path")
-        .data(geojson.features)
-        .join("path")
-        .attr("d", pathGenerator)
-        .attr("fill", d => {
-            const iso = d.properties && d.properties.iso3;
-            const status = countryStatus[iso];
-            return COLORS[status] || COLORS.default;
-        })
-        .attr("stroke", COLORS.stroke)
-        .style("stroke-width", "0.5")
-        .on("mouseover", function(event, d) {
-            const [mouseX, mouseY] = d3.pointer(event, svg.node());
-            const tooltipGroup = svg.append("g").attr("class", "tooltip");
-            const textElement = tooltipGroup.append("text")
-                .attr("x", mouseX + 10)
-                .attr("y", mouseY + 16)
-                .attr("fill", COLORS.tooltipText)
-                .style("font-size", "14px")
-                .style("font-family", "Lato, sans-serif")
-                .text(d.properties.country_name || d.properties.ADMIN || d.properties.name);
-            const bbox = textElement.node().getBBox();
-            tooltipGroup.insert("rect", "text")
-                .attr("x", bbox.x - 5 + mouseX + 8)
-                .attr("y", bbox.y - 3 + mouseY)
-                .attr("width", bbox.width + 10)
-                .attr("height", bbox.height + 6)
-                .attr("fill", COLORS.tooltipBg)
-                .attr("stroke", COLORS.tooltipBorder)
-                .attr("rx", 4)
-                .attr("ry", 4);
-        })
-        .on("mousemove", event => {
-            const [mouseX, mouseY] = d3.pointer(event, svg.node());
-            svg.select(".tooltip rect").attr("x", mouseX + 8).attr("y", mouseY);
-            svg.select(".tooltip text").attr("x", mouseX + 10).attr("y", mouseY + 16);
-        })
-        .on("mouseout", function(event, d) {
-            d3.select(this).attr("fill", COLORS[countryStatus[d.properties.iso3]] || COLORS.default);
-            svg.select(".tooltip").remove();
-        })
-        .on("click", (event, d) => {
-        //    window.open(`https://en.wikipedia.org/wiki/${encodeURIComponent(d.properties.name)}`, "_blank");
-         });
-})
-.catch(err => {
-    console.error("Failed to load GeoJSON:", err);
 });
-
-const legendData = [
-    { label: "Ongoing", color: COLORS.ongoing },
-    { label: "Ongoing & Completed", color: COLORS.both },
-    { label: "Completed", color: COLORS.completed },
-
-];
-
-const legend = svg.append("g")
-    .attr("class", "legend")
-    .attr("transform", `translate(${width - 180}, 30)`);
-
-legend.selectAll("rect")
-    .data(legendData)
-    .enter()
-    .append("rect")
-    .attr("x", 0)
-    .attr("y", (d, i) => i * 25)
-    .attr("width", 18)
-    .attr("height", 18)
-    .style("fill", d => d.color);
-
-legend.selectAll("text")
-    .data(legendData)
-    .enter()
-    .append("text")
-    .attr("x", 25)
-    .attr("y", (d, i) => i * 25 + 13)
-    .text(d => d.label)
-    .style("font-size", "14px")
-    .style("font-family", "Lato, sans-serif")
-    .attr("alignment-baseline", "middle");
-  
 </script>
+
+</body>
+</html>
