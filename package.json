@@ -1,0 +1,7 @@
+{
+  "name": "geodata-map",
+  "version": "1.0.0",
+  "scripts": {
+    "generate": "node generate_map.js"
+  }
+}
