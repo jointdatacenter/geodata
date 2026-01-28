@@ -1,6 +1,24 @@
 const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
+const { execSync } = require('child_process');
+
+function isLatoFontAvailable() {
+    try {
+        const result = execSync('fc-list : family', { encoding: 'utf8' });
+        return result.toLowerCase().includes('lato');
+    } catch {
+        return false;
+    }
+}
+
+const PREFERRED_FONT = 'Lato';
+const FALLBACK_FONT = 'sans-serif';
+const FONT_FAMILY = `${PREFERRED_FONT}, ${FALLBACK_FONT}`;
+
+if (!isLatoFontAvailable()) {
+    console.warn(`Warning: Font "${PREFERRED_FONT}" not found. Falling back to "${FALLBACK_FONT}".`);
+}
 
 const COLORS = {
     ongoing: "#00B398",
@@ -20,7 +38,7 @@ countryCategories.ongoing.forEach(c => countryStatus[c] = "ongoing");
 countryCategories.completed.forEach(c => countryStatus[c] = "completed");
 countryCategories.both.forEach(c => countryStatus[c] = "both");
 
-const svgPath = path.join(__dirname, 'docs', 'map_unhcr.svg');
+const svgPath = path.join(__dirname, 'map_unhcr.svg');
 const outputPngPath = path.join(__dirname, 'docs', 'map.png');
 
 let svg = fs.readFileSync(svgPath, 'utf8');
@@ -41,11 +59,11 @@ svg = svg.replace(/stroke-width="0.001"/g, 'stroke-width="0.2"');
 const legendSvg = `
   <g id="legend" transform="translate(200, 380)">
     <rect x="0" y="0" width="14" height="14" fill="${COLORS.ongoing}"/>
-    <text x="18" y="11" font-family="sans-serif" font-size="11">Ongoing</text>
+    <text x="18" y="11" font-family="${FONT_FAMILY}" font-size="11">Ongoing</text>
     <rect x="120" y="0" width="14" height="14" fill="${COLORS.both}"/>
-    <text x="138" y="11" font-family="sans-serif" font-size="11">Ongoing &amp; Completed</text>
+    <text x="138" y="11" font-family="${FONT_FAMILY}" font-size="11">Ongoing &amp; Completed</text>
     <rect x="310" y="0" width="14" height="14" fill="${COLORS.completed}"/>
-    <text x="328" y="11" font-family="sans-serif" font-size="11">Completed</text>
+    <text x="328" y="11" font-family="${FONT_FAMILY}" font-size="11">Completed</text>
   </g>
 `;
 
