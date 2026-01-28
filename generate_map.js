@@ -49,6 +49,9 @@ const legendSvg = `
   </g>
 `;
 
+// Add white background
+svg = svg.replace(/<svg([^>]*)>/, '<svg$1><rect width="100%" height="100%" fill="#ffffff"/>');
+
 svg = svg.replace('</svg>', `${legendSvg}</svg>`);
 
 sharp(Buffer.from(svg))
