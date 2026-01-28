@@ -38,13 +38,13 @@ svg = svg.replace(/stroke-width="0.001"/g, 'stroke-width="0.2"');
 
 // Add legend before closing </svg>
 const legendSvg = `
-  <g id="legend" transform="translate(650, 20)">
-    <rect x="0" y="0" width="18" height="18" fill="${COLORS.ongoing}"/>
-    <text x="25" y="14" font-family="sans-serif" font-size="12">Ongoing</text>
-    <rect x="0" y="25" width="18" height="18" fill="${COLORS.both}"/>
-    <text x="25" y="39" font-family="sans-serif" font-size="12">Ongoing &amp; Completed</text>
-    <rect x="0" y="50" width="18" height="18" fill="${COLORS.completed}"/>
-    <text x="25" y="64" font-family="sans-serif" font-size="12">Completed</text>
+  <g id="legend" transform="translate(200, 380)">
+    <rect x="0" y="0" width="14" height="14" fill="${COLORS.ongoing}"/>
+    <text x="18" y="11" font-family="sans-serif" font-size="11">Ongoing</text>
+    <rect x="120" y="0" width="14" height="14" fill="${COLORS.both}"/>
+    <text x="138" y="11" font-family="sans-serif" font-size="11">Ongoing &amp; Completed</text>
+    <rect x="310" y="0" width="14" height="14" fill="${COLORS.completed}"/>
+    <text x="328" y="11" font-family="sans-serif" font-size="11">Completed</text>
   </g>
 `;
 
