@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const sharp = require('sharp');
 
 const COLORS = {
     ongoing: "#00B398",
@@ -20,7 +21,7 @@ countryCategories.completed.forEach(c => countryStatus[c] = "completed");
 countryCategories.both.forEach(c => countryStatus[c] = "both");
 
 const svgPath = path.join(__dirname, 'docs', 'map_unhcr.svg');
-const outputSvgPath = path.join(__dirname, 'docs', 'map_colored.svg');
+const outputPngPath = path.join(__dirname, 'docs', 'map.png');
 
 let svg = fs.readFileSync(svgPath, 'utf8');
 
@@ -50,5 +51,10 @@ const legendSvg = `
 
 svg = svg.replace('</svg>', `${legendSvg}</svg>`);
 
-fs.writeFileSync(outputSvgPath, svg);
-console.log(`Colored SVG saved to: ${outputSvgPath}`);
+sharp(Buffer.from(svg))
+    .resize(1600, 800)
+    .flatten({ background: '#ffffff' })
+    .png()
+    .toFile(outputPngPath)
+    .then(() => console.log(`PNG saved to: ${outputPngPath}`))
+    .catch(err => console.error('Error:', err));
