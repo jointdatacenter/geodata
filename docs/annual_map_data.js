@@ -56,8 +56,8 @@ const regions = {
 };
 
 const legendItems = [
-  { color: COLORS.started_prvs_year, text: "At least one activity started in 2024", type: "fill" },
-  { color: COLORS.started_before, text: "At least one activity started before 2024", type: "fill" },
+  { color: COLORS.started_prvs_year, text: "At least one activity started in 2025", type: "fill" },
+  { color: COLORS.started_before, text: "At least one activity started before 2025", type: "fill" },
   { color: COLORS.completedOutline, text: "At least one activity completed", type: "outline" }
 ];
 
