@@ -165,8 +165,8 @@
         .append("path")
         .attr("d", path)
         .attr("fill", d => {
-          if (countryCategories.started_prvs_year.includes(d.properties.name)) return COLORS.started_prvs_year;
-          if (countryCategories.started_before.includes(d.properties.name)) return COLORS.started_before;
+          if (countryCategories.started_prvs_year.includes(d.id)) return COLORS.started_prvs_year;
+          if (countryCategories.started_before.includes(d.id)) return COLORS.started_before;
           return COLORS.default;
         })
         .on("mouseover", function(event, d) {
@@ -221,7 +221,7 @@
         .attr("stroke-width", 1);
 
       mapElements.completed.selectAll("path")
-        .data(data.features.filter(d => countryCategories.completed.includes(d.properties.name)))
+        .data(data.features.filter(d => countryCategories.completed.includes(d.id)))
         .enter()
         .append("path")
         .attr("d", path)

@@ -12,24 +12,18 @@ const COLORS = {
 
 const countryCategories = {
   started_prvs_year: [
-    "Bangladesh", "Benin", "Burkina Faso", "Burundi", "Central African Republic",
-    "Cameroon", "Chad", "Republic of the Congo", "Democratic Republic of the Congo", "Cote d'Ivoire",
-    "Iraq", "Kenya", "Malawi", "Malaysia", "Mali",
-    "Mauritania", "Mozambique", "Niger", "Sudan",
-    "Togo", "Türkiye", "Yemen", "Zimbabwe"
+    "BGD", "BEN", "BFA", "BDI", "CAF", "CMR", "TCD", "COG", "COD", "CIV",
+    "IRQ", "KEN", "MWI", "MYS", "MLI", "MRT", "MOZ", "NER", "SDN",
+    "TGO", "TUR", "YEM", "ZWE"
   ],
   started_before: [
-    "Afghanistan", "Chile", "Colombia", "Djibouti", "Ecuador",
-    "Ethiopia", "Honduras", "Jordan", "Kazakhstan", "Kyrgyzstan",
-    "Lebanon", "Libya", "Moldova", "Pakistan", "Peru",
-    "Somalia", "South Sudan", "Turkmenistan", "Uganda"
+    "AFG", "CHL", "COL", "DJI", "ECU", "ETH", "HND", "JOR", "KAZ", "KGZ",
+    "LBN", "LBY", "MDA", "PAK", "PER", "SOM", "SSD", "TKM", "UGA"
   ],
   completed: [
-    "Bangladesh", "Burkina Faso", "Central African Republic", "Chad", "Chile",
-    "Colombia", "Djibouti", "Democratic Republic of the Congo", "Ecuador", "Ethiopia",
-    "Iraq", "Jordan", "Kazakhstan", "Kyrgyzstan", "Kenya",
-    "Lebanon", "Peru", "Somalia", "Yemen", "Turkmenistan",
-    "Türkiye"
+    "BGD", "BFA", "CAF", "TCD", "CHL", "COL", "DJI", "COD", "ECU", "ETH",
+    "IRQ", "JOR", "KAZ", "KGZ", "KEN", "LBN", "PER", "SOM", "YEM", "TKM",
+    "TUR"
   ]
 };
 
