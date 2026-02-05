@@ -12,18 +12,19 @@ const COLORS = {
 
 const countryCategories = {
   started_prvs_year: [
-    "BGD", "BEN", "BFA", "BDI", "CAF", "CMR", "TCD", "COG", "COD", "CIV",
-    "IRQ", "KEN", "MWI", "MYS", "MLI", "MRT", "MOZ", "NER", "SDN",
-    "TGO", "TUR", "YEM", "ZWE"
+    "CMR", "COL", "ECU", "ETH", "GMB", "GTM", "GIN", "JOR", "KEN", "MWI",
+    "MLI", "MRT", "SEN", "SOM", "SSD", "TZA", "UGA", "UKR"
   ],
   started_before: [
-    "AFG", "CHL", "COL", "DJI", "ECU", "ETH", "HND", "JOR", "KAZ", "KGZ",
-    "LBN", "LBY", "MDA", "PAK", "PER", "SOM", "SSD", "TKM", "UGA"
+    "AFG", "BGD", "BEN", "BFA", "BDI", "CMR", "CAF", "TCD", "CHL", "COL",
+    "COG", "CIV", "DJI", "COD", "ECU", "ETH", "HND", "IRQ", "JOR", "KAZ",
+    "KEN", "KGZ", "LBN", "LBY", "MWI", "MYS", "MLI", "MRT", "MDA", "MOZ",
+    "NER", "PAK", "PER", "SOM", "SSD", "SDN", "TUR", "TKM", "UGA", "YEM", "ZWE"
   ],
   completed: [
-    "BGD", "BFA", "CAF", "TCD", "CHL", "COL", "DJI", "COD", "ECU", "ETH",
-    "IRQ", "JOR", "KAZ", "KGZ", "KEN", "LBN", "PER", "SOM", "YEM", "TKM",
-    "TUR"
+    "BGD", "BFA", "BDI", "CMR", "CAF", "TCD", "CHL", "COL", "DJI", "COD",
+    "ECU", "ETH", "IRQ", "JOR", "KAZ", "KEN", "KGZ", "LBN", "MLI", "PER",
+    "SOM", "TUR", "TKM", "YEM"
   ]
 };
 
