@@ -1,113 +1,59 @@
 
-// docs/countryCategories.js
+// docs/countries_data.js
 
 const countryCategories = {
   ongoing: [
-
-    "BEN", // Benin
-
     "BDI", // Burundi
-
-    "CIV", // Côte d'Ivoire
-
-    "GMB", // Gambia
-
-    "GTM", // Guatemala
-
-    "GNB", // Guinea-Bissau
-
-    "HND", // Honduras
-
-    "LBY", // Libya
-
-    "MWI", // Malawi
-
-    "MYS", // Malaysia
-
-    "MLI", // Mali
-
-    "MRT", // Mauritania
-
-    "MDA", // Moldova
-
-    "MOZ", // Mozambique
-
-    "NER", // Niger
-
-    "PAK", // Pakistan
-
+    "BEN", // Benin
+    "CIV", // Cote D'Ivoire
     "COG", // Republic of the Congo
-    
-    "SEN", // Senegal
-    
-    "SSD", // South Sudan
-    
+    "GIN", // Guinea
+    "GMB", // The Gambia
+    "GTM", // Guatemala
+    "HND", // Honduras
+    "LBY", // Libya
+    "MDA", // Moldova
+    "MLI", // Mali
+    "MOZ", // Mozambique
+    "MRT", // Mauritania
+    "MWI", // Malawi
+    "MYS", // Malaysia
+    "NER", // Niger
+    "PAK", // Pakistan
     "SDN", // Sudan
-    
+    "SEN", // Senegal
+    "SSD", // South Sudan
     "SYR", // Syria
-    
-    "TZA", // Tanzania (United Republic of Tanzania)
-
     "UGA", // Uganda
-
     "UKR", // Ukraine
-
   ],
 
   completed: [
-
-    "AFG", // Afghanistan
-
     "CHL", // Chile
-
     "KAZ", // Kazakhstan
-
-   // "KRI", // KRI is not an ISO3 code (Kurdistan Region of Iraq)
-
     "KGZ", // Kyrgyzstan
-    
     "LBN", // Lebanon
-
-    "TKM"  // Turkmenistan
-
+    "TKM", // Turkmenistan
   ],
 
   both: [
-
-    "BGD", // Bangladesh
-
     "BFA", // Burkina Faso
-    
-    "CMR", // Cameroon
-
+    "BGD", // Bangladesh
     "CAF", // Central African Republic
-
-    "TCD", // Chad
-
-    "COL", // Colombia
-
-    "DJI", // Djibouti
-
+    "CMR", // Cameroon
     "COD", // Democratic Republic of the Congo
-
+    "COL", // Colombia
+    "DJI", // Djibouti
     "ECU", // Ecuador
-
     "ETH", // Ethiopia
-
     "IRQ", // Iraq
-
-    "KEN", // Kenya
-
     "JOR", // Jordan
-
+    "KEN", // Kenya
     "PER", // Peru
-
     "SOM", // Somalia
-
+    "TCD", // Chad
+    "TUR", // Turkiye
     "YEM", // Yemen
-
-    "TUR"  // Türkiye (Turkey)
-
   ]
 };
 
