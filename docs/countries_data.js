@@ -29,6 +29,7 @@ const countryCategories = {
   ],
 
   completed: [
+    "AFG", // Afghanistan
     "CHL", // Chile
     "KAZ", // Kazakhstan
     "KGZ", // Kyrgyzstan
