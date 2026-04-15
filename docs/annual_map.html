@@ -124,10 +124,13 @@
 
     const svg = d3.select("#map");
     const mapContainer = d3.select(".map-container");
-    const width = mapContainer.node().getBoundingClientRect().width - 20;
     const height = 600;
+    let width = 0;
 
-    svg.attr("width", width).attr("height", height);
+    function measureWidth() {
+      const w = mapContainer.node().getBoundingClientRect().width - 20;
+      return w > 0 ? w : 964;
+    }
 
     const mapElements = {
       fills: svg.append("g").attr("class", "country-fills"),
@@ -232,35 +235,46 @@
 
     initUI();
 
+    let cachedData = null;
+
+    function drawAll() {
+      width = measureWidth();
+      svg.attr("width", width).attr("height", height);
+      if (!cachedData) return;
+      const projection = createProjection(currentRegion);
+      const path = d3.geoPath().projection(projection);
+      clearMap();
+      renderMap(cachedData, projection, path);
+    }
+
     d3.json("https://jointdatacenter.github.io/geodata/world.geojson")
       .then(function(data) {
         data.features = data.features.filter(d => d.properties.name !== "Antarctica");
-
-        let projection = createProjection(currentRegion);
-        let path = d3.geoPath().projection(projection);
-
-        renderMap(data, projection, path);
+        cachedData = data;
+        drawAll();
 
         d3.selectAll(".region-button").on("click", function() {
           const newRegion = this.getAttribute("data-region");
-
-          if (newRegion !== currentRegion) {
-            d3.selectAll(".region-button").classed("active", false);
-            d3.select(this).classed("active", true);
-
-            currentRegion = newRegion;
-
-            projection = createProjection(currentRegion);
-            path = d3.geoPath().projection(projection);
-
-            clearMap();
-            renderMap(data, projection, path);
-          }
+          if (newRegion === currentRegion) return;
+          d3.selectAll(".region-button").classed("active", false);
+          d3.select(this).classed("active", true);
+          currentRegion = newRegion;
+          drawAll();
         });
       })
       .catch(error => {
         console.error("Error loading or processing the GeoJSON data:", error);
       });
+
+    let resizeTimer;
+    function scheduleResize() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(drawAll, 150);
+    }
+    if (typeof ResizeObserver !== "undefined") {
+      new ResizeObserver(scheduleResize).observe(mapContainer.node());
+    }
+    window.addEventListener("resize", scheduleResize);
   </script>
 </body>
 </html>
